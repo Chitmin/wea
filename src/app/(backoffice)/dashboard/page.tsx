@@ -31,7 +31,7 @@ export default function Dashboard() {
     }
 
     call();
-  }, [setTransactions, fetch]);
+  }, [setTransactions]);
 
   return (
     <SidebarProvider>
