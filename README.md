@@ -5,6 +5,14 @@ Check redis (PONG return?).
 redis-cli ping
 ```
 Install redis server if not already yet.
+---
+
+Copy `env.example` to `.env`
+```bash
+cp env.example .env
+```
+Update the `.env`
+---
 
 Run dev server
 ```bash
