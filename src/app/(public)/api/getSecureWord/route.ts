@@ -1,12 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { encrypt } from "@/lib/utils";
 import { checkRateLimit } from "@/lib/ratelimiter";
-
-export interface GetSecureWordResponse {
-  issuedAt: number;
-  username: string;
-  secureWord: string;
-}
+import { type Auth, save } from "@/stores/credentials";
 
 export async function POST(request: NextRequest) {
   "use server";
@@ -21,11 +16,13 @@ export async function POST(request: NextRequest) {
   }
 
   const issuedAt = Date.now();
-  const response: GetSecureWordResponse = {
+  const response: Auth = {
     username,
     issuedAt,
     secureWord: encrypt(username, issuedAt.toString()),
   };
+
+  await save(response);
 
   return NextResponse.json(response, { status: 200 });
 }

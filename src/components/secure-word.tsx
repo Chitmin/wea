@@ -1,26 +1,29 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
-import { CopyButton } from "@/components/ui/copy-button";
+// import { CopyButton } from "@/components/ui/copy-button";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useExpiresIn } from "@/hooks/use-expires-in";
+import { Auth } from "@/stores/credentials";
 
 export default function SecureWord({
-  word,
+  auth,
   expired,
-}: Readonly<{ word: string; expired: number }>) {
+  onNext,
+}: Readonly<{ auth: Auth; expired: number; onNext: () => void }>) {
   const [isExpires, seconds] = useExpiresIn(expired);
 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-2 items-center">
-        <Input disabled value={word} />
-        <CopyButton variant="ghost" content={word} />
+        <Input disabled value={auth.secureWord} />
+        {/* <CopyButton variant="ghost" content={word} /> */}
       </div>
       {!isExpires ? (
         <>
           <p className="text-center text-gray-500">Expires in: {seconds}</p>
-          <Button className="w-full">
-            <Link href="/password">Next</Link>
+          <Button className="w-full" onClick={onNext}>
+            Next
           </Button>
         </>
       ) : (

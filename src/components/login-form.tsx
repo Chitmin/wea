@@ -12,9 +12,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { GetSecureWordResponse } from "@/app/api/getSecureWord/route";
 import SecureWord from "./secure-word";
-import Link from "next/link";
+import { Auth } from "@/stores/credentials";
+import PasswordForm from "./password-form";
 
 type LoginFromProps = React.ComponentProps<"div">;
 
@@ -22,9 +22,8 @@ export function LoginForm({ className, ...props }: LoginFromProps) {
   const [username, setUserName] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [secureWord, setSecureWord] = useState<GetSecureWordResponse | null>(
-    null
-  );
+  const [secureWord, setSecureWord] = useState<Auth | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async () => {
     setPending(true);
@@ -49,16 +48,18 @@ export function LoginForm({ className, ...props }: LoginFromProps) {
         return;
       }
 
-      const data = (await response.json()) as GetSecureWordResponse;
+      const data = await response.json();
       setSecureWord(data);
     } catch (error) {
-      error && setError(String(error));
+      if (error) {
+        setError(String(error));
+      }
     } finally {
       setPending(false);
     }
   };
 
-  return (
+  return !showPassword ? (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
@@ -69,10 +70,8 @@ export function LoginForm({ className, ...props }: LoginFromProps) {
             </>
           ) : (
             <>
-              <CardTitle>Get your token</CardTitle>
-              <CardDescription>
-                Copy your token and go to next step
-              </CardDescription>
+              <CardTitle>Your token is generated</CardTitle>
+              <CardDescription>Go to next step to add password</CardDescription>
             </>
           )}
         </CardHeader>
@@ -112,11 +111,17 @@ export function LoginForm({ className, ...props }: LoginFromProps) {
             </form>
           ) : (
             <div className="text-sm mt-2 text-left text-wrap flex flex-col space-y-4">
-              <SecureWord word={secureWord.secureWord} expired={60} />
+              <SecureWord
+                auth={secureWord}
+                expired={60}
+                onNext={() => setShowPassword(true)}
+              />
             </div>
           )}
         </CardContent>
       </Card>
     </div>
+  ) : (
+    <PasswordForm auth={secureWord!} />
   );
 }
