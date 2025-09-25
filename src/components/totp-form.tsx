@@ -25,9 +25,13 @@ export default function TotpForm({ username }: { username: string }) {
         router.push("/dashboard");
       }
 
-      timer.current = setInterval(() => {
-        setSeconds((prev) => prev - 1);
-      }, 1000);
+      if (seconds > 0) {
+        timer.current = setInterval(() => {
+          setSeconds((prev) => {
+            return prev - 1;
+          });
+        }, 1000);
+      }
     }
 
     return () => {
