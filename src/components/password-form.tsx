@@ -23,6 +23,8 @@ export default function PasswordForm({ auth }: { auth: Auth }) {
   const router = useRouter();
 
   const onSubmit = async () => {
+    setPending(true);
+    setError(null);
     const hashedPassword = SHA256(password).toString();
 
     try {
